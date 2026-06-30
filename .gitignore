@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage / type-checker caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS cruft
+.DS_Store
+
+# NOTE: tests/fixtures/**/.obsidian/ is intentional test data — do NOT ignore .obsidian/

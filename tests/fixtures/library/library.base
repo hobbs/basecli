@@ -1,0 +1,105 @@
+filters:
+  and:
+    - type == "book"
+    - file.inFolder("books")
+formulas:
+  rating_stars: '"★".repeat(rating)'
+  length_label: 'if(pages > 400, "long", if(pages > 250, "medium", "short"))'
+  author_initials: 'author.split(" ").map(value.slice(0, 1)).join("")'
+  decade: 'published.year - (published.year % 10)'
+  is_recent: 'published >= date("2020-01-01")'
+  top_genre: 'genre[0]'
+  backlink_count: 'file.backlinks.length'
+  links_to_echoes: 'file.hasLink("echoes-of-tomorrow")'
+properties:
+  file.name:
+    displayName: Title
+  author:
+    displayName: Author
+  rating:
+    displayName: Rating
+  formula.rating_stars:
+    displayName: Stars
+  formula.length_label:
+    displayName: Length
+views:
+  - type: cards
+    name: 🃏 Covers
+    image: cover
+    groupBy:
+      property: formula.length_label
+      direction: ASC
+    order:
+      - file.name
+      - author
+      - formula.rating_stars
+    sort:
+      - property: rating
+        direction: DESC
+
+  - type: table
+    name: 📚 All books
+    order:
+      - file.name
+      - author
+      - rating
+      - pages
+      - formula.author_initials
+      - formula.decade
+      - formula.backlink_count
+      - published
+      - read
+      - genre
+    sort:
+      - property: published
+        direction: ASC
+    summaries:
+      rating: Average
+      pages: Sum
+      author: Unique
+      read: Checked
+      published: Latest
+
+  - type: table
+    name: 🔢 Stats
+    order:
+      - file.name
+    summaries:
+      rating: Max
+      pages: Min
+      published: Earliest
+      read: Unchecked
+      genre: Filled
+
+  - type: table
+    name: 📊 More stats
+    order:
+      - file.name
+    summaries:
+      rating: Median
+      pages: Range
+      formula.decade: Stddev
+      sequel_to: Empty
+
+  - type: table
+    name: 🚀 Unread sci-fi
+    filters:
+      and:
+        - read == false
+        - 'genre.contains("sci-fi")'
+    order:
+      - file.name
+      - published
+      - formula.top_genre
+    sort:
+      - property: published
+        direction: ASC
+
+  - type: table
+    name: 🔗 Backlinks
+    filters:
+      and:
+        - formula.backlink_count > 0
+    order:
+      - file.name
+      - formula.backlink_count

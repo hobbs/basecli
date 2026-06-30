@@ -1,0 +1,10 @@
+# Project metadata lives in setup.cfg (declarative setuptools config) so the
+# package installs cleanly on both modern setuptools (PEP 621) and the older
+# setuptools (<61) that ships in some environments. This file pins the build
+# backend and tool configuration only.
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

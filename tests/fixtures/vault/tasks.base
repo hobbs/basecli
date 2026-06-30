@@ -1,0 +1,110 @@
+filters:
+  and:
+    - type == "task"
+    - file.inFolder("tasks")
+    - '!file.folder.contains("archive")'
+formulas:
+  days_left: if(due_date, ((number(due_date) - number(today())) / 86400000).round())
+  bucket: if(due_date, if(due_date < today(), "1 · 🔴 Overdue", if(due_date == today(), "2 · 🟠 Today", if(due_date <= today() + "7d", "3 · 🟡 This week", "4 · 🟢 Later"))), "5 · 📋 Someday / no date")
+  category: if(file.hasTag("work"), "💼 Work", if(file.hasTag("personal"), "🏠 Personal", "Other"))
+summaries:
+  customAvg: 'values.average().round(1)'
+properties:
+  file.name:
+    displayName: Task
+  due_date:
+    displayName: Due
+  formula.days_left:
+    displayName: Days left
+  formula.bucket:
+    displayName: When
+  formula.category:
+    displayName: Type
+  tags:
+    displayName: Project
+  status:
+    displayName: Status
+  file.mtime:
+    displayName: Updated
+views:
+  - type: table
+    name: 🎯 By urgency
+    filters:
+      and:
+        - status != "done"
+    groupBy:
+      property: formula.bucket
+      direction: ASC
+    order:
+      - file.name
+      - due_date
+      - formula.days_left
+      - formula.category
+      - tags
+    sort:
+      - property: due_date
+        direction: ASC
+    summaries:
+      formula.days_left: Min
+  - type: table
+    name: 💼 Work
+    filters:
+      and:
+        - status != "done"
+        - file.hasTag("work")
+    groupBy:
+      property: formula.bucket
+      direction: ASC
+    order:
+      - file.name
+      - due_date
+      - formula.days_left
+      - tags
+    sort:
+      - property: due_date
+        direction: ASC
+    summaries:
+      formula.days_left: customAvg
+  - type: table
+    name: 🏠 Personal
+    filters:
+      and:
+        - status != "done"
+        - file.hasTag("personal")
+    groupBy:
+      property: formula.bucket
+      direction: ASC
+    order:
+      - file.name
+      - due_date
+      - formula.days_left
+      - tags
+    sort:
+      - property: due_date
+        direction: ASC
+  - type: table
+    name: 📋 Backlog (no due date)
+    filters:
+      and:
+        - status != "done"
+        - "!due_date"
+    groupBy:
+      property: formula.category
+      direction: ASC
+    order:
+      - file.name
+      - tags
+  - type: table
+    name: ✅ Done
+    filters:
+      and:
+        - status == "done"
+    order:
+      - file.name
+      - due_date
+      - tags
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+    limit: 30
