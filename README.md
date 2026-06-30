@@ -26,9 +26,35 @@ $ basecli tasks.base --today 2026-06-30 --format table
 
 ## Install
 
+`basecli` is a command-line tool, so the cleanest install is
+[pipx](https://pipx.pypa.io/) — it puts `basecli` on your PATH in its own isolated
+venv, sidestepping the PEP 668 `externally-managed-environment` errors you hit
+when `pip install`-ing into a system or Homebrew Python.
+
 ```bash
-pip install -e .          # editable install; provides the `basecli` entry point
-# or run without installing:
+# one-time: install pipx itself
+brew install pipx && pipx ensurepath      # macOS; or: python3 -m pip install --user pipx
+
+# install basecli — from a local checkout…
+pipx install .
+# …or straight from GitHub
+pipx install git+https://github.com/hobbs/basecli.git
+```
+
+Manage it later with `pipx upgrade basecli` / `pipx uninstall basecli`.
+
+To hack on the engine, do an editable install so the `basecli` command tracks your
+source edits live:
+
+```bash
+pipx install --editable .
+# or, in a plain venv:
+python -m venv .venv && source .venv/bin/activate && pip install -e .
+```
+
+Or run it without installing at all:
+
+```bash
 python -m basecli ...
 ```
 
